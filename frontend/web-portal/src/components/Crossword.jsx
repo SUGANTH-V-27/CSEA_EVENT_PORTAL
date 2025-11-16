@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from "react";
 
 const Crossword = ({ year, onComplete }) => {
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+
+  // Auto-hide toast after 3 seconds
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
+
+  const showToastNotification = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
+  };
+
   // First year crossword data - based on first image
   const firstYearCrossword = {
     size: 15,
@@ -1186,16 +1204,14 @@ const Crossword = ({ year, onComplete }) => {
         if (data.success && data.data?.allCorrect) {
           if (onComplete) onComplete();
         } else if (data.success) {
-          alert(
-            `${data.data.correct} out of ${data.data.total} answers are correct. Please try again.`
-          );
+          showToastNotification(`${data.data.correct} / ${data.data.total} correct`);
         } else {
-          alert(data.message || "Error submitting answers.");
+          showToastNotification(data.message || "Error submitting answers");
         }
       })
       .catch((err) => {
         console.error("Fetch error:", err);
-        alert("Network error. Please try again.");
+        showToastNotification("Network error. Please try again.");
       });
   };
 
@@ -1848,6 +1864,32 @@ const Crossword = ({ year, onComplete }) => {
           </div>
         </div>
       </div>
+
+      {/* Toast notification */}
+      {showToast && (
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            left: "50%",
+            transform: `translateX(-50%) translateY(${showToast ? "0" : "-100px"})`,
+            background: "rgba(230, 25, 75, 0.95)",
+            color: "#fff",
+            padding: "12px 24px",
+            borderRadius: "8px",
+            fontSize: "16px",
+            fontWeight: "600",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+            zIndex: 10000,
+            transition: "transform 0.3s ease, opacity 0.3s ease",
+            opacity: showToast ? 1 : 0,
+            backdropFilter: "blur(10px)",
+            border: "2px solid rgba(255, 255, 255, 0.2)",
+          }}
+        >
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 };
