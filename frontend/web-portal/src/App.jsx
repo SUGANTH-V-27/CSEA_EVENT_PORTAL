@@ -4,7 +4,14 @@ import RoundOne from "./components/RoundOne";
 import RoundTwo from "./components/RoundTwo";
 import Login from "./components/Login";
 // import StrangerThingsIntro from './components/StrangerThingsIntro' // Disabled - using video intro instead
+<<<<<<< HEAD
+import VideoIntro from './components/VideoIntro'
+import GateSequence from './components/GateSequence'
+
+
+=======
 import VideoIntro from "./components/VideoIntro";
+>>>>>>> 2e59516fdd16c8ab3eb67583d27c03088a598ae5
 
 function App() {
   const [currentRound, setCurrentRound] = useState(1);
@@ -15,6 +22,9 @@ function App() {
   const [showToast, setShowToast] = useState(false);
   const [showIntro, setShowIntro] = useState(false); // Will be set based on localStorage check
   const [loginFadeIn, setLoginFadeIn] = useState(false);
+<<<<<<< HEAD
+  const [showGateSequence, setShowGateSequence] = useState(false);
+=======
   const [showCredits, setShowCredits] = useState(false);
 
   // Auto-hide toast
@@ -23,6 +33,7 @@ function App() {
     const t = setTimeout(() => setShowToast(false), 3000);
     return () => clearTimeout(t);
   }, [showToast]);
+>>>>>>> 2e59516fdd16c8ab3eb67583d27c03088a598ae5
 
   // On mount, check localStorage for a saved login and intro status
   useEffect(() => {
@@ -110,6 +121,27 @@ function App() {
     return (
       <>
         {/* Login page - naturally emerges from black background */}
+<<<<<<< HEAD
+        <div className={`app-container login-mode ${showIntro && !loginFadeIn ? 'login-hidden' : 'login-visible'}`} style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          width: '100vw', 
+          height: '100vh',
+          zIndex: showIntro && !loginFadeIn ? 9998 : 10000,
+          transition: 'opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ease-in-out'
+        }}>
+          <Login onLogin={(year, rollNum) => {
+            setLoggedInYear(year);
+            setRollNumber(rollNum);
+            try { 
+              localStorage.setItem('loggedInYear', year);
+              if (rollNum) localStorage.setItem('rollNumber', rollNum);
+            } catch (e) { /* ignore */ }
+            // Trigger gate sequence after login
+            setShowGateSequence(true);
+          }} />
+=======
         <div
           className={`app-container login-mode ${
             showIntro && !loginFadeIn ? "login-hidden" : "login-visible"
@@ -137,6 +169,7 @@ function App() {
               }
             }}
           />
+>>>>>>> 2e59516fdd16c8ab3eb67583d27c03088a598ae5
           <footer className="footer">
             <p>CSEA Event Portal - Stranger Things Edition</p>
           </footer>
@@ -161,6 +194,15 @@ function App() {
     );
   }
 
+<<<<<<< HEAD
+  // Show gate sequence after login (before Round 1)
+  if (showGateSequence) {
+    return (
+      <GateSequence 
+        onComplete={() => {
+          setShowGateSequence(false);
+          // Gate sequence complete, proceed to Round 1
+=======
   // Show credits if game is complete
   if (showCredits) {
     return (
@@ -168,6 +210,7 @@ function App() {
         onComplete={() => {
           // Credits finished - keep credits visible, don't restart
           // Do nothing - credits stay on screen with final message
+>>>>>>> 2e59516fdd16c8ab3eb67583d27c03088a598ae5
         }} 
       />
     );
