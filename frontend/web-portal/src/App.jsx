@@ -1,50 +1,67 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-import RoundOne from './components/RoundOne'
-import RoundTwo from './components/RoundTwo'
-import Login from './components/Login'
+import { useState, useEffect } from "react";
+import "./App.css";
+import RoundOne from "./components/RoundOne";
+import RoundTwo from "./components/RoundTwo";
+import Login from "./components/Login";
 // import StrangerThingsIntro from './components/StrangerThingsIntro' // Disabled - using video intro instead
+<<<<<<< HEAD
 import VideoIntro from './components/VideoIntro'
 import GateSequence from './components/GateSequence'
 
 
+=======
+import VideoIntro from "./components/VideoIntro";
+>>>>>>> 2e59516fdd16c8ab3eb67583d27c03088a598ae5
 
 function App() {
   const [currentRound, setCurrentRound] = useState(1);
   const [loggedInYear, setLoggedInYear] = useState(null);
   const [rollNumber, setRollNumber] = useState(null);
   const [fragments, setFragments] = useState([]);
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
   const [showIntro, setShowIntro] = useState(false); // Will be set based on localStorage check
   const [loginFadeIn, setLoginFadeIn] = useState(false);
+<<<<<<< HEAD
   const [showGateSequence, setShowGateSequence] = useState(false);
+=======
+  const [showCredits, setShowCredits] = useState(false);
+
+  // Auto-hide toast
+  useEffect(() => {
+    if (!showToast) return;
+    const t = setTimeout(() => setShowToast(false), 3000);
+    return () => clearTimeout(t);
+  }, [showToast]);
+>>>>>>> 2e59516fdd16c8ab3eb67583d27c03088a598ae5
 
   // On mount, check localStorage for a saved login and intro status
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('loggedInYear');
+      const saved = localStorage.getItem("loggedInYear");
       if (saved) {
         setLoggedInYear(saved);
       }
-      const savedRollNumber = localStorage.getItem('rollNumber');
+      const savedRollNumber = localStorage.getItem("rollNumber");
       if (savedRollNumber) {
         setRollNumber(savedRollNumber);
       }
-      const savedFragments = localStorage.getItem('passwordFragments');
+      const savedFragments = localStorage.getItem("passwordFragments");
       if (savedFragments) {
         setFragments(JSON.parse(savedFragments));
       }
-      
+
       // Load saved round progress if user is logged in
-      const savedRound = localStorage.getItem('currentRound');
+      const savedRound = localStorage.getItem("currentRound");
       if (savedRound && saved) {
         const roundNum = parseInt(savedRound, 10);
         if (roundNum >= 1 && roundNum <= 2) {
           setCurrentRound(roundNum);
         }
       }
-      
+
       // Check if intro has been played before
-      const introPlayed = localStorage.getItem('introPlayed');
+      const introPlayed = localStorage.getItem("introPlayed");
       if (!introPlayed) {
         // Intro hasn't been played - show it
         setShowIntro(true);
@@ -60,11 +77,25 @@ function App() {
     }
   }, []);
 
+  // Check for credits only on mount if user is already logged in (refresh after finale completion)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('loggedInYear');
+      const finaleComplete = localStorage.getItem('finaleVideoComplete');
+      // Only show credits if user is already logged in AND finale is complete (refresh scenario)
+      if (saved && finaleComplete === 'true') {
+        setShowCredits(true);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, []); // Only run on mount, not when loggedInYear changes
+
   // Save fragments to localStorage whenever they change
   useEffect(() => {
     if (fragments.length > 0) {
       try {
-        localStorage.setItem('passwordFragments', JSON.stringify(fragments));
+        localStorage.setItem("passwordFragments", JSON.stringify(fragments));
       } catch (e) {
         // ignore
       }
@@ -75,7 +106,7 @@ function App() {
   useEffect(() => {
     if (loggedInYear) {
       try {
-        localStorage.setItem('currentRound', currentRound.toString());
+        localStorage.setItem("currentRound", currentRound.toString());
       } catch (e) {
         // ignore
       }
@@ -83,13 +114,14 @@ function App() {
   }, [currentRound, loggedInYear]);
 
   // Debug: confirm component renders in the browser console
-  console.log('App mounted, currentRound=', currentRound);
+  console.log("App mounted, currentRound=", currentRound);
 
   // Show intro sequence first, but render login behind it (visible through O's hole)
   if (!loggedInYear) {
     return (
       <>
         {/* Login page - naturally emerges from black background */}
+<<<<<<< HEAD
         <div className={`app-container login-mode ${showIntro && !loginFadeIn ? 'login-hidden' : 'login-visible'}`} style={{ 
           position: 'fixed', 
           top: 0, 
@@ -109,23 +141,52 @@ function App() {
             // Trigger gate sequence after login
             setShowGateSequence(true);
           }} />
+=======
+        <div
+          className={`app-container login-mode ${
+            showIntro && !loginFadeIn ? "login-hidden" : "login-visible"
+          }`}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            zIndex: showIntro && !loginFadeIn ? 9998 : 10000,
+            transition:
+              "opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ease-in-out",
+          }}
+        >
+          <Login
+            onLogin={(year, rollNum) => {
+              setLoggedInYear(year);
+              setRollNumber(rollNum);
+              try {
+                localStorage.setItem("loggedInYear", year);
+                if (rollNum) localStorage.setItem("rollNumber", rollNum);
+              } catch (e) {
+                /* ignore */
+              }
+            }}
+          />
+>>>>>>> 2e59516fdd16c8ab3eb67583d27c03088a598ae5
           <footer className="footer">
             <p>CSEA Event Portal - Stranger Things Edition</p>
           </footer>
         </div>
-        
+
         {/* Video Intro - Stranger Things intro */}
         {showIntro && (
-          <VideoIntro 
+          <VideoIntro
             onComplete={() => {
               setShowIntro(false);
               // Mark intro as played in localStorage
               try {
-                localStorage.setItem('introPlayed', 'true');
+                localStorage.setItem("introPlayed", "true");
               } catch (e) {
                 // ignore
               }
-            }} 
+            }}
             onFadeInLogin={() => setLoginFadeIn(true)}
           />
         )}
@@ -133,6 +194,7 @@ function App() {
     );
   }
 
+<<<<<<< HEAD
   // Show gate sequence after login (before Round 1)
   if (showGateSequence) {
     return (
@@ -140,6 +202,15 @@ function App() {
         onComplete={() => {
           setShowGateSequence(false);
           // Gate sequence complete, proceed to Round 1
+=======
+  // Show credits if game is complete
+  if (showCredits) {
+    return (
+      <Credits 
+        onComplete={() => {
+          // Credits finished - keep credits visible, don't restart
+          // Do nothing - credits stay on screen with final message
+>>>>>>> 2e59516fdd16c8ab3eb67583d27c03088a598ae5
         }} 
       />
     );
@@ -147,38 +218,73 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Toast (global) */}
+      <div
+        className={`app-toast ${showToast ? "show" : ""}`}
+        role="status"
+        aria-live="polite"
+      >
+        {toastMessage}
+      </div>
       {/* User Roll Number Display - Top Right */}
       {rollNumber && (
         <div className="user-roll-badge">
           <span className="user-label">USER:</span>
           <span className="user-roll-number">{rollNumber}</span>
+          <button
+            className="logout-button"
+            onClick={() => {
+              try {
+                localStorage.removeItem("rollNumber");
+                localStorage.removeItem("loggedInYear");
+                localStorage.removeItem("token");
+              } catch (e) {
+                /* ignore */
+              }
+              setLoggedInYear(null);
+              setRollNumber(null);
+              setFragments([]);
+              setCurrentRound(1);
+              setToastMessage("Logged out successfully");
+              setShowToast(true);
+            }}
+          >
+            Logout
+          </button>
         </div>
       )}
       <main className="main-content">
         {(() => {
           switch (currentRound) {
             case 1:
-              return <RoundOne year={loggedInYear}  onComplete={() => {
-                setCurrentRound(2);
-                // Round One completion is saved automatically via the useEffect above
-              }} />;
+              return (
+                <RoundOne
+                  loggedInYear={localStorage.getItem("loggedInYear")}
+                  onComplete={() => {
+                    setCurrentRound(2);
+                    // Round One completion is saved automatically via the useEffect above
+                  }}
+                />
+              );
             case 2:
-              return <RoundTwo 
-                loggedInYear={loggedInYear}
-                fragments={fragments}
-                setFragments={setFragments}
-                onComplete={() => {
-                  // Round 2 completion triggers JoyceWall
-                  // JoyceWall shows jumbled message → finale video → password input (Round 3)
-                  // When JoyceWall video completes, the entire game is finished
-                  // Mark game as complete in localStorage
-                  try {
-                    localStorage.setItem('gameComplete', 'true');
-                  } catch (e) {
-                    // ignore
-                  }
-                }} 
-              />;
+              return (
+                <RoundTwo
+                  loggedInYear={loggedInYear}
+                  fragments={fragments}
+                  setFragments={setFragments}
+                  onComplete={() => {
+                    // Round 2 completion triggers JoyceWall
+                    // JoyceWall shows jumbled message → finale video → password input (Round 3)
+                    // When JoyceWall video completes, the entire game is finished
+                    // Mark game as complete in localStorage
+                    try {
+                      localStorage.setItem("gameComplete", "true");
+                    } catch (e) {
+                      // ignore
+                    }
+                  }}
+                />
+              );
             default:
               return <RoundOne />;
           }

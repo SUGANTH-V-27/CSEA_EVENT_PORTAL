@@ -101,7 +101,7 @@ export const verifyOtp = async (req, res) => {
     const token = jwt.sign(
       { email: user.email, year: user.year },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '4h' }
     );
 
     const redirectPath = `/portal/year${user.year}`;
