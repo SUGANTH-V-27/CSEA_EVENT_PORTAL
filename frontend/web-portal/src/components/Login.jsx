@@ -295,10 +295,6 @@ const Login = ({ onLogin }) => {
     setError('');
     try {
       setLoading(true);
-<<<<<<< HEAD
-      const { token, claims } = await verifyOtpAndStoreUnified(email.trim().toLowerCase(), codeInput.trim());
-      // Determine year from JWT claims (or mock claims)
-=======
       const { token, claims } = await verifyOtpAndStore(
         email.trim().toLowerCase(), 
         codeInput.trim(),
@@ -311,7 +307,6 @@ const Login = ({ onLogin }) => {
         })
       );
       // Determine year from JWT claims
->>>>>>> 2e59516fdd16c8ab3eb67583d27c03088a598ae5
       const yearNum = Number(claims?.year);
       const yearLabel = yearNum === 1 ? '1st' : yearNum === 2 ? '2nd' : '';
       // Extract roll number from email (e.g., "24z368" from "24z368@psgtech.ac.in")
